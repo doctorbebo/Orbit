@@ -79,6 +79,7 @@ PlayerSettings:
   usePlayerLog: 1
   bakeCollisionMeshes: 0
   forceSingleInstance: 0
+  useFlipModelSwapchain: 1
   resizableWindow: 0
   useMacAppStoreValidation: 0
   macAppStoreCategory: public.app-category.games
@@ -846,7 +847,7 @@ PlayerSettings:
   cloudProjectId: cd2baeb0-2d9c-4c41-9da4-118908b3f393
   framebufferDepthMemorylessMode: 0
   projectName: Orbit
-  organizationId: pneumatic-games
+  organizationId: donation-games
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0

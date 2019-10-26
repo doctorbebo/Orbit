@@ -43,7 +43,6 @@ public class MainMenuUI : MonoBehaviour
     {
         ShipController.gameMode = ShipController.GameMode.Learning;
         Time.timeScale = 1.0f;
-        LevelPicker.ReloadScene();
     }
 
 

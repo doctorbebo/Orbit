@@ -32,7 +32,7 @@ public class UIBehaviorScript : MonoBehaviour
         {
             if(!isAlreadySet)
             {
-                Debug.Log("High Score " + PlayerPrefs.GetInt("highScore") + "    Score: " + ShipController.score);
+                //Debug.Log("High Score " + PlayerPrefs.GetInt("highScore") + "    Score: " + ShipController.score);
                 UIEndGameBehaviors();
             }
 

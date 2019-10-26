@@ -270,6 +270,7 @@ public class ShipController : MonoBehaviour
             {
                 isPlayerDead = true;
                 gameObject.SetActive(false);
+            //    AdManager.ShowAd();
             }
         }
 

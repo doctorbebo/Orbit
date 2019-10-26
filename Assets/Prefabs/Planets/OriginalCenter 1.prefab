@@ -91,7 +91,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee5a46384719e425a82fe513aa6a95a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shipTransform: {fileID: 0}
   planet: {fileID: 0}
 --- !u!1 &868455919802738744
 GameObject:
@@ -105,7 +104,6 @@ GameObject:
   - component: {fileID: 868455919802738740}
   - component: {fileID: 868455919802738741}
   - component: {fileID: 8471461823812209573}
-  - component: {fileID: 3920985187843082625}
   m_Layer: 0
   m_Name: Collider
   m_TagString: Untagged
@@ -188,17 +186,3 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.01
---- !u!114 &3920985187843082625
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 868455919802738744}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee5a46384719e425a82fe513aa6a95a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shipTransform: {fileID: 0}
-  planet: {fileID: 0}
