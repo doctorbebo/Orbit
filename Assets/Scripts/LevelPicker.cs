@@ -2,24 +2,37 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.Advertisements;
 
-public class LevelPicker : MonoBehaviour, IUnityAdsListener 
-{
-    public static bool isRewardedANewLife;
 
-    Scene scene;
-    string gameId = "3337357";
-    bool testMode = false;
-    static int attemptCounter;
+public class LevelPicker : MonoBehaviour, IUnityAdsListener
+{
+    public ShipController shipController;
+
+    public enum AdState
+    {
+        ShwowingBasicAd,
+        ShowingNewLifeRewardAd,
+        NotShowingAd
+    }
+
+    public static AdState adState = AdState.NotShowingAd;
+    public static bool isRewardedANewLife;
+    public static string newLifeRewardedAd = "New_Life_Ad";
+    public static string afterDeathAd = "AfterDeathAd";
 
     private static int scoreTemp;
+    private static int attemptCounter;
 
-    string newLifeRewardedAd = "New_Life_Ad";
-    string basicAd = "AfterDeathAd";
+    [HideInInspector]
+    public bool isAskingAboutRewardAd = false;
 
-    bool isAdSHowing;
+    private Scene scene;
+    private string gameId = "3337357";
+    private bool testMode = true;
+    private bool canReloadLevel;
 
     private void Start()
     {
+        canReloadLevel = true;
         scene = SceneManager.GetActiveScene();
 
         Advertisement.AddListener(this);
@@ -28,18 +41,15 @@ public class LevelPicker : MonoBehaviour, IUnityAdsListener
         attemptCounter = PlayerPrefs.GetInt("Attempt Counter", 0);
         attemptCounter++;
         PlayerPrefs.SetInt("Attempt Counter", attemptCounter);
+
     }
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))
-        {
             ReloadLevel();
-        }
-        if (Input.GetMouseButtonDown(0) && ShipController.isPlayerDead)
-        { 
+
+        if (Input.GetMouseButtonDown(0) && ShipController.isPlayerDead && adState == AdState.NotShowingAd && !isAskingAboutRewardAd)
             ReloadLevel();
-        }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -55,74 +65,84 @@ public class LevelPicker : MonoBehaviour, IUnityAdsListener
         }
 
     }
-
     public void OnUnityAdsReady(string placementId)
     {
-        if(placementId == basicAd || placementId == newLifeRewardedAd)
+        if (placementId == afterDeathAd || placementId == newLifeRewardedAd)
         {
-          // Debug.Log(placementId + "is pulled from the Internet and is ready.");
-        }else
+            // Debug.Log(placementId + "is pulled from the Internet and is ready.");
+        } else
         {
-           Debug.LogError("Ad placementId Strings do not match.");
+            Debug.LogError("Ad placementId Strings do not match.");
         }
     }
-
     public void OnUnityAdsDidError(string message)
     {
         Debug.LogError(message);
     }
-
     public void OnUnityAdsDidStart(string placementId)
     {
-        isAdSHowing = true;
-       // Debug.Log(placementId + " started.");
-
     }
-
     public void OnUnityAdsDidFinish(string placementId, ShowResult showResult)
     {
+
         Time.timeScale = 1f;
+        if (placementId == afterDeathAd && adState != AdState.ShowingNewLifeRewardAd)
+        {
+            adState = AdState.NotShowingAd;
+        } 
 
         if (showResult == ShowResult.Finished && placementId == newLifeRewardedAd)
         {
-            RewardPlayer();
+            adState = AdState.NotShowingAd;
+            isAskingAboutRewardAd = false;
+            shipController.SetIsRewardedNewLife(true);
+            ReloadLevel();
+        }
+        else if (showResult == ShowResult.Skipped && placementId == newLifeRewardedAd)
+        {
+            adState = AdState.NotShowingAd;
+            isAskingAboutRewardAd = false;
+            ReloadLevel();
         }
         else if (showResult == ShowResult.Failed)
         {
-           Debug.LogError(placementId + " Failed to Play.");
+            Debug.LogError(placementId + " Failed to Play.");
+            adState = AdState.NotShowingAd;
+            isAskingAboutRewardAd = false;
         }
     }
 
-     public void ReloadLevel()
+
+    public void ShowAd(string placmentID)
     {
-        if (isAdSHowing)
-        {
-            return;
-        }
-        SaveTempScore();
+        int attemptsBetweenAds = 8;
 
-        SceneManager.LoadScene(scene.buildIndex);
-        PlanetBehavior.farthestXPosition = 0;
-
-       if(attemptCounter %  4 == 0)
+        if (attemptCounter % attemptsBetweenAds == 0 && placmentID == afterDeathAd)
         {
+            Advertisement.Show(placmentID);
+            adState = AdState.ShwowingBasicAd;
             Time.timeScale = 0f;
-            ShowAd(basicAd);
-            isAdSHowing = true;
+        }
+        else if (placmentID == newLifeRewardedAd)
+        {
+            Advertisement.Show(placmentID);
+            adState = AdState.ShowingNewLifeRewardAd;
+        }
+        else if (attemptCounter % attemptsBetweenAds == 0)
+        {
+            Debug.LogError(placmentID + " is incorrect. Double check for typo.");
         }
     }
-
-    void ShowAd(string placementId)
+    public void ReloadLevel()
     {
-        Advertisement.Show(placementId);
+        if(canReloadLevel)
+        {
+            SceneManager.LoadScene(scene.buildIndex);
+            PlanetBehavior.farthestXPosition = 0;
+        }
     }
-
-    private static void SaveTempScore()
+    public void RestartButtonAd()
     {
-        scoreTemp = ShipController.score;
-    }
-    private static void RewardPlayer()
-    {
-        ShipController.score = scoreTemp;
+        ShowAd(afterDeathAd);
     }
 }

@@ -15,6 +15,9 @@ public class ShipController : MonoBehaviour
     public float orbitSpeed = 3f;
     public float spaceRotationSpeed = 105f;
 
+    private static bool isRewardedRestart;
+    private static bool canBeRewardedRestart = true;
+
     [HideInInspector]
     public float xPosCamera;
     public float angle;
@@ -53,7 +56,14 @@ public class ShipController : MonoBehaviour
         particleSystemEmission1 = particleSystem1.emission;
         particleSystemEmission2 = particleSystem2.emission;
         isPlayerDead = false;
-        score = -1;
+
+        if(isRewardedRestart)
+        {
+            isRewardedRestart = false;
+        }else
+        {
+            score = -1;
+        }
         isLaunchable = true;
         Launch();
     }
@@ -273,10 +283,9 @@ public class ShipController : MonoBehaviour
             //    AdManager.ShowAd();
             }
         }
-
-        public void TutorialPause()
+        public void SetIsRewardedNewLife(bool b)
         {
-
+        isRewardedRestart = b;
         }
 }
 

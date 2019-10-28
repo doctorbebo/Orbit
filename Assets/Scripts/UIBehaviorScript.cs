@@ -3,12 +3,16 @@ using TMPro;
 
 public class UIBehaviorScript : MonoBehaviour
 {
-
+    public LevelPicker levelPicker;
     public GameObject ActivegameplayUi;
     public GameObject endGameUI;
+    public GameObject offerRewardUI;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI endGameHighScoreText;
     public TextMeshProUGUI endGameScoreText;
+
+    private static bool canBeRewardedRestart = true;
+
 
 
     bool isAlreadySet; // isAlreadySet keeps the game from running UIEndGameBehaviors() every frame.
@@ -19,6 +23,7 @@ public class UIBehaviorScript : MonoBehaviour
         isAlreadySet = false;
         ActivegameplayUi.SetActive(true);
         endGameUI.SetActive(false);
+        offerRewardUI.SetActive(false);
     }
 
     // Update is called once per frame
@@ -28,9 +33,9 @@ public class UIBehaviorScript : MonoBehaviour
         {
             scoreText.text = ShipController.score.ToString();
         }
-        if(ShipController.isPlayerDead)
+        if (ShipController.isPlayerDead)
         {
-            if(!isAlreadySet)
+            if (!isAlreadySet)
             {
                 //Debug.Log("High Score " + PlayerPrefs.GetInt("highScore") + "    Score: " + ShipController.score);
                 UIEndGameBehaviors();
@@ -44,28 +49,59 @@ public class UIBehaviorScript : MonoBehaviour
             PlayerPrefs.SetInt("highScore", 0);
             Debug.Log("High Score Reset");
         }
-
-
     }
     void UIEndGameBehaviors()
     {
         ActivegameplayUi.SetActive(false);
-        endGameUI.SetActive(true);
+        int highScore = PlayerPrefs.GetInt("highScore", 0);
+        bool showRewardUI = false;
 
-        if (ShipController.score > PlayerPrefs.GetInt("highScore", 0))
+        if (ShipController.score > -1 && canBeRewardedRestart)
         {
+            showRewardUI = true;
+            canBeRewardedRestart = false;
+        }else
+        {
+            canBeRewardedRestart = true;
+        }
+        levelPicker.ShowAd(LevelPicker.afterDeathAd);
+
+        if (ShipController.score > highScore && showRewardUI)
+        {
+            levelPicker.isAskingAboutRewardAd = true;
+            offerRewardUI.SetActive(true);
+            PlayerPrefs.SetInt("highScore", ShipController.score);
+            endGameHighScoreText.text = "NEW HIGH SCORE:  " + ShipController.score;
+            endGameScoreText.text = "";
+        }
+        else if(showRewardUI && ShipController.score <= highScore)
+        {
+            levelPicker.isAskingAboutRewardAd = true;
+            offerRewardUI.SetActive(true);
+            endGameHighScoreText.text = "Current high score:  " + PlayerPrefs.GetInt("highScore", 0);
+            endGameScoreText.text = "Score: " + ShipController.score;
+        }
+        else if (ShipController.score > highScore)
+        {
+            endGameUI.SetActive(true);
             PlayerPrefs.SetInt("highScore", ShipController.score);
             endGameHighScoreText.text = "NEW HIGH SCORE:  " + ShipController.score;
             endGameScoreText.text = "";
         }
         else
         {
+            endGameUI.SetActive(true);
             endGameHighScoreText.text = "Current high score:  " + PlayerPrefs.GetInt("highScore", 0);
             endGameScoreText.text = "Score: " + ShipController.score;
-
         }
 
-        isAlreadySet = true;
+            isAlreadySet = true;
 
+        }
+    public void ExtraLifeButtonPressed()
+    {
+        levelPicker.ShowAd(LevelPicker.newLifeRewardedAd);
     }
 }
+
+
