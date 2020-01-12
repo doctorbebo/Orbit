@@ -10,6 +10,8 @@ public class UIBehaviorScript : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI endGameHighScoreText;
     public TextMeshProUGUI endGameScoreText;
+    public TextMeshProUGUI rewardGameHighScoreText;
+    public TextMeshProUGUI rewardGameScoreText;
 
     private static bool canBeRewardedRestart = true;
 
@@ -71,15 +73,15 @@ public class UIBehaviorScript : MonoBehaviour
             levelPicker.isAskingAboutRewardAd = true;
             offerRewardUI.SetActive(true);
             PlayerPrefs.SetInt("highScore", ShipController.score);
-            endGameHighScoreText.text = "NEW HIGH SCORE:  " + ShipController.score;
-            endGameScoreText.text = "";
+            rewardGameHighScoreText.text = "NEW HIGH SCORE:  " + ShipController.score;
+            rewardGameScoreText.text = "";
         }
         else if(showRewardUI && ShipController.score <= highScore)
         {
             levelPicker.isAskingAboutRewardAd = true;
             offerRewardUI.SetActive(true);
-            endGameHighScoreText.text = "Current high score:  " + PlayerPrefs.GetInt("highScore", 0);
-            endGameScoreText.text = "Score: " + ShipController.score;
+            rewardGameHighScoreText.text = "Current high score:  " + PlayerPrefs.GetInt("highScore", 0);
+            rewardGameScoreText.text = "Score: " + ShipController.score;
         }
         else if (ShipController.score > highScore)
         {

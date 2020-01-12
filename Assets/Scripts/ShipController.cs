@@ -70,6 +70,7 @@ public class ShipController : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log(gameMode);
         if (Input.GetMouseButtonDown(0))
         {
             switch (gameMode)

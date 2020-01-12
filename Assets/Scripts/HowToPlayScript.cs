@@ -70,4 +70,9 @@ public class HowToPlayScript : MonoBehaviour
     {
         howToPlayText.enabled = show;
     }
+    public void SetGameModeToLearning()
+    {
+        ShipController.gameMode = ShipController.GameMode.Learning;
+        Time.timeScale = 1f;
+    }
 }
