@@ -6,7 +6,7 @@ using UnityEngine.Advertisements;
 public class AdManager : MonoBehaviour, IUnityAdsListener {
 
     string gameId = "3337357";
-    bool testMode = true;
+    bool testMode = false;
 
     private static int attemptCounter = 0;
     // Start is called before the first frame update
